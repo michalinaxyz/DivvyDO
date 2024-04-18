@@ -30,14 +30,19 @@ export function TaskForm({ addTask }: TaskFormProps) {
       </option>
     );
   }
+  function subformAddTask(t: Task): void {
+    addTask(t);
+    setType("");
+    setName("");
+  }
 
   switch (taskType) {
     case TaskTypes.UNPREDICTABLE: {
-      subform = <UnpredictableTasksForm addTask={addTask} name={name} />;
+      subform = <UnpredictableTasksForm addTask={subformAddTask} name={name} />;
       break;
     }
     case TaskTypes.REPETITIVE: {
-      subform = <RepetitiveTasksForm addTask={addTask} name={name} />;
+      subform = <RepetitiveTasksForm addTask={subformAddTask} name={name} />;
       break;
     }
   }

@@ -30,34 +30,5 @@ export function TasksForm({ initTasks, setTasks }: TasksFormProps) {
         Save tasks
       </button>
     </>
-    //   <FormWrapper title="Add tasks to divide">
-    //     <label>Task name</label>
-    //     <input
-    //       autoFocus
-    //       required
-    //       value={name}
-    //       placeholder="Ex. Empty the dishwasher"
-    //       onChange={(e) => setTasks({ name: e.target.value })}
-    //     />
-    //     <label>Task type</label>
-    //     <select required onChange={(e) => setTasks({ type: e.target.value })}>
-    //       <option value="repetitive">Repetitive</option>
-    //       <option value="unpredictable">Unpredictable</option>
-    //     </select>
-    //     <label>Duration</label>
-    //     <input
-    //       required
-    //       type="number"
-    //       value={duration}
-    //       onChange={(e) => setTasks({ duration: e.target.value })}
-    //     />
-    //     <label>Frequency in a week</label>
-    //     <input
-    //       required
-    //       type="number"
-    //       value={frequency_in_week}
-    //       onChange={(e) => setTasks({ frequency_in_week: e.target.value })}
-    //     />
-    //   </FormWrapper>
   );
 }

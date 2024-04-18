@@ -7,7 +7,7 @@ import UnpredictableTask from "../model/UnpredictableTask";
 function prepareRequestBody(
   participants: Participant[],
   tasks: Task[]
-): TaskSchedule {
+): Object {
   const mappedTasks = tasks.map((t) => {
     if (t instanceof RepetitiveTask) {
       return {
@@ -37,29 +37,54 @@ function prepareRequestBody(
   return requestBody;
 }
 
-export default function divideTasks(
+type calculateSplitResponse = {
+  participants: {
+    name: string;
+    tasks: {
+      name: string;
+      duration: number;
+      frequency_in_week?: number;
+      probility_in_month?: number;
+    }[];
+    totalDuration: number;
+  }[];
+};
+
+function makeScheduleFromResponse(
+  response: calculateSplitResponse
+): TaskSchedule {
+  //TODO: map response to a TaskSchedule
+
+  const schedule: TaskSchedule = {};
+
+  for (const participant of response.participants) {
+    schedule[participant.name] = participant.tasks.map((task) => task.name);
+  }
+
+  return schedule;
+}
+
+export default async function divideTasks(
   participants: Participant[],
   tasks: Task[]
-): TaskSchedule {
+): Promise<TaskSchedule> {
   const requestBody = prepareRequestBody(participants, tasks);
 
-  //wysłać request (fetch lub XHR)
-
-  fetch("http://localhost:8080/calculate-split", {
+  const response = await fetch("http://localhost:8080/calculate-split", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(requestBody),
-  })
-    .then((res) => {
-      if (res.status == 200) return res.json();
-      else {
-        throw new Error(`Status: ${res.status}`);
-      }
-    })
-    .then((data) => console.log(data))
-    .catch((e) => alert(e));
+  });
 
-  return new TaskSchedule();
+  if (response.status === 200) {
+    const data = await response.json();
+    let taskSchedule = makeScheduleFromResponse(data);
+    return taskSchedule;
+  } else {
+    throw new Error(`Status: ${response.status}`);
+  }
 }
+
+// zwracamy data z wynikiem podziału schedule, jak je użyć w taskDivider?
