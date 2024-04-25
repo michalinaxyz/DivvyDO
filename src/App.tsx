@@ -1,5 +1,4 @@
-import { FormEvent, useState } from "react";
-import { useMultistepForm } from "./useMultistepForm";
+import { useState, useRef } from "react";
 import { ParticipantsForm } from "./forms/participants/ParticipantsForm";
 import { TasksForm } from "./forms/tasks/TasksForm";
 import Participant from "./model/Participant";
@@ -11,82 +10,124 @@ import TaskSchedule from "./model/TaskSchedule";
 import TaskAssignment from "./ui/taskAssignment";
 
 const PARTICIPANTS: Participant[] = [
-  new Participant("Piti"),
-  new Participant("Gati"),
+  new Participant("User1"),
+  new Participant("User2"),
 ];
-
-type Response = {
-  participants: string[];
-};
 
 const TASKS: Task[] = [new UnpredictableTask("vacuuming")];
 
 function App() {
-  const [participants, setParticipants] = useState(PARTICIPANTS);
-  const [tasks, setTasks] = useState(TASKS);
+  const participants = useRef(PARTICIPANTS);
+  const tasks = useRef(TASKS);
   const [taskSchedule, setTaskSchedule] = useState<TaskSchedule>();
   const [formPage, setFormPage] = useState("main");
+
+  const handleNext = () => {
+    setFormPage((prev) => {
+      switch (prev) {
+        case "main":
+          return "participants";
+        case "participants":
+          return "tasks";
+        case "tasks":
+          return "results";
+        default:
+          return prev;
+      }
+    });
+  };
+
+  const handleBack = () => {
+    setFormPage((prev) => {
+      switch (prev) {
+        case "participants":
+          return "main";
+        case "tasks":
+          return "participants";
+        case "results":
+          return "tasks";
+        default:
+          return prev;
+      }
+    });
+  };
 
   let resultTable = <div></div>;
   if (taskSchedule) {
     resultTable = <TaskAssignment schedule={taskSchedule} />;
   }
-  let formComponent = <></>; //at first - main page with "start"
 
-  switch (formPage) {
-    case "main": {
-      formComponent = <></>;
-      break;
-    }
-    case "participants": {
-      formComponent = (
-        <ParticipantsForm
-          initParticipants={participants}
-          setParticipants={setParticipants}
-        />
-      );
-      break;
-    }
-    case "tasks": {
-      formComponent = (
-        <>
-          <TasksForm initTasks={tasks} setTasks={setTasks} />
-          <button
-            onClick={async () => {
-              let a: TaskSchedule = await divideTasks(participants, tasks);
-              setTaskSchedule(a);
-            }}
-          >
-            {" "}
-            Divide tasks
-          </button>
-        </>
-      );
-      break;
-    }
-    case "results": {
-      formComponent = resultTable;
-      break;
+  function getFormComponent() {
+    switch (formPage) {
+      case "main": {
+        return <h1>DivvyDO</h1>;
+      }
+      case "participants": {
+        return (
+          <ParticipantsForm
+            participantsRef={participants}
+            handleNext={handleNext}
+          />
+        );
+      }
+      case "tasks": {
+        return (
+          <>
+            <TasksForm tasksRef={tasks} />
+            <button
+              onClick={async () => {
+                let a: TaskSchedule = await divideTasks(
+                  participants.current,
+                  tasks.current
+                );
+                setTaskSchedule(a);
+                handleNext();
+              }}
+            >
+              Divide tasks
+            </button>
+          </>
+        );
+      }
+      case "results": {
+        return resultTable;
+      }
+      default:
+        return <></>;
     }
   }
+
   return (
     <>
-      {formComponent}
-      <ParticipantsForm
-        initParticipants={participants}
-        setParticipants={setParticipants}
-      />
-      <TasksForm initTasks={tasks} setTasks={setTasks} />
-      <button
-        onClick={async () => {
-          let a: TaskSchedule = await divideTasks(participants, tasks);
-          setTaskSchedule(a);
-        }}
-      >
-        {/* zwracam Promise pending :)) */}
-        Divide tasks
-      </button>
-      {resultTable}
+      {getFormComponent()}
+      <div>
+        <button
+          style={{
+            display:
+              formPage === "main" || formPage === "participants" ? "none" : "",
+          }}
+          onClick={() => {
+            handleBack();
+          }}
+        >
+          Back
+        </button>
+        <button
+          style={{
+            display:
+              formPage === "results" ||
+              formPage === "participants" ||
+              formPage === "tasks"
+                ? "none"
+                : "",
+          }}
+          onClick={() => {
+            handleNext();
+          }}
+        >
+          Next
+        </button>
+      </div>
     </>
   );
 }

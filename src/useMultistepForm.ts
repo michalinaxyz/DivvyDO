@@ -1,34 +1,33 @@
-import { ReactElement, useState } from "react";
+import { useState, useCallback } from "react"; //custom hook od gemini :)
 
-export function useMultistepForm(steps: ReactElement[]) {
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+interface Step {
+  title: string;
+  component: React.ReactNode;
+}
 
-  function next() {
-    setCurrentStepIndex((i) => {
-      if (i >= steps.length - 1) return i;
-      return i + 1;
-    });
-  }
+export function useMultistepForm(
+  initialSteps: Step[]
+): [
+  currentStep: number,
+  steps: Step[],
+  goToStep: (newStep: number) => void,
+  isFirstStep: boolean,
+  isLastStep: boolean
+] {
+  const [currentStep, setCurrentStep] = useState(0);
+  const steps = initialSteps;
 
-  function back() {
-    setCurrentStepIndex((i) => {
-      if (i <= 0) return i;
-      return i - 1;
-    });
-  }
+  const goToStep = useCallback(
+    (newStep: number) => {
+      if (newStep >= 0 && newStep < steps.length) {
+        setCurrentStep(newStep);
+      }
+    },
+    [steps]
+  );
 
-  function goTo(index: number) {
-    setCurrentStepIndex(index);
-  }
+  const isFirstStep = currentStep === 0;
+  const isLastStep = currentStep === steps.length - 1;
 
-  return {
-    currentStepIndex,
-    step: steps[currentStepIndex],
-    steps,
-    isFirstStep: currentStepIndex === 0,
-    isLastStep: currentStepIndex === steps.length - 1,
-    goTo,
-    next,
-    back,
-  };
+  return [currentStep, steps, goToStep, isFirstStep, isLastStep];
 }
