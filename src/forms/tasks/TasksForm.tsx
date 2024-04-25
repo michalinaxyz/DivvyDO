@@ -1,16 +1,12 @@
-import { FormWrapper } from "../../FormWrapper";
 import Task from "../../model/Task";
 import { TaskForm } from "./TaskForm";
-import RepetitiveTask from "../../model/RepetitiveTask";
-import UnpredictableTask from "../../model/UnpredictableTask";
 import { useState } from "react";
 
 type TasksFormProps = {
-  initTasks: Task[];
-  setTasks: (t: Task[]) => void;
+  tasksRef: { current: Task[] };
 };
 
-export function TasksForm({ initTasks, setTasks }: TasksFormProps) {
+export function TasksForm({ tasksRef }: TasksFormProps) {
   const [taskList, setTaskList] = useState(new Array<Task>());
 
   const addTask = (task: Task) => {
@@ -19,12 +15,25 @@ export function TasksForm({ initTasks, setTasks }: TasksFormProps) {
     console.log("Adding a task");
   };
 
+  function generateUniqueId() {
+    return (
+      Math.random().toString(36).substring(2, 15) +
+      Math.random().toString(36).substring(2, 15)
+    );
+  }
+
   return (
     <>
       <TaskForm addTask={addTask}></TaskForm>
+      <ul>
+        Added tasks:
+        {taskList.map((task) => (
+          <li key={generateUniqueId()}>{task.name}</li>
+        ))}
+      </ul>
       <button
         onClick={() => {
-          setTasks(taskList);
+          tasksRef.current = taskList;
         }}
       >
         Save tasks

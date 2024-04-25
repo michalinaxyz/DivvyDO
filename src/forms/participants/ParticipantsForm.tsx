@@ -3,15 +3,15 @@ import { useState } from "react";
 import ParticipantInput from "./ParticipantInput";
 
 type UserFormProps = {
-  initParticipants: Participant[];
-  setParticipants: (p: Participant[]) => void;
+  participantsRef: { current: Participant[] };
+  handleNext: () => void;
 };
 
 export function ParticipantsForm({
-  initParticipants,
-  setParticipants,
+  participantsRef,
+  handleNext,
 }: UserFormProps) {
-  const [participants, setParticipants_] = useState(initParticipants);
+  const [participants, setParticipants_] = useState(participantsRef.current);
   console.log("participant form rerender");
 
   function addParticipant() {
@@ -53,7 +53,7 @@ export function ParticipantsForm({
         style={{
           display: "grid",
           gap: "1rem .5rem",
-          justifyContent: "flex-start",
+          justifyContent: "center",
           gridTemplateColumns: "auto minmax(auto, 400px)",
         }}
       >
@@ -65,7 +65,8 @@ export function ParticipantsForm({
         <button
           type="button"
           onClick={() => {
-            setParticipants(participants);
+            participantsRef.current = participants;
+            handleNext();
           }}
         >
           Save participants
