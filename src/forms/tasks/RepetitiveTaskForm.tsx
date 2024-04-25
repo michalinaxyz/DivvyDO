@@ -17,9 +17,7 @@ export default function RepetitiveTasksForm({
   return (
     <FormWrapper title=" ">
       <label>Frequency in a week</label>
-      <br />
       <div className="description">How often this chore must be completed?</div>
-      <br />
 
       <input
         required
@@ -34,13 +32,10 @@ export default function RepetitiveTasksForm({
           );
         }}
       />
-      <br />
       <label>Duration</label>
-      <br />
       <div className="description">
         How long does this task take (at one time)?
       </div>
-      <br />
       <input
         required
         type="number"
@@ -54,7 +49,6 @@ export default function RepetitiveTasksForm({
           );
         }}
       />
-      <br />
       <button
         onClick={() => {
           addTask(repTask);

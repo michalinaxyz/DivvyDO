@@ -19,8 +19,12 @@ export function TaskForm({ addTask }: TaskFormProps) {
   const [taskType, setType] = useState("");
   const [name, setName] = useState("");
 
-  console.log("Taskform rerender happens");
-  let optionList = [];
+  let optionList = [
+    <option hidden disabled selected={true} value="">
+      {" "}
+      -- select a task type --{" "}
+    </option>,
+  ];
   let subform = <></>;
 
   for (const key in TaskTypes) {
@@ -51,7 +55,6 @@ export function TaskForm({ addTask }: TaskFormProps) {
     <div>
       <FormWrapper title="Add tasks to divide">
         <label>Task name</label>
-        <br />
         <input
           autoFocus
           required
@@ -59,21 +62,15 @@ export function TaskForm({ addTask }: TaskFormProps) {
           placeholder="Ex. Empty the dishwasher"
           onChange={(e) => setName(e.target.value)}
         />
-        <br />
         <label>Task type</label> <br />
         <div className="description">
           Does the task occur routinely or randomly?
         </div>
-        <br />
         <select
           onChange={(e) => {
             setType(e.target.value);
           }}
         >
-          <option hidden disabled selected={true} value="">
-            {" "}
-            -- select a task type --{" "}
-          </option>
           {optionList}
         </select>
       </FormWrapper>

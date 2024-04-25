@@ -17,12 +17,10 @@ export default function UnpredictableTasksForm({
   return (
     <FormWrapper title=" ">
       <label>Probability</label>
-      <br />
       <div className="description">
         How high are the chances that this task will need to be completed within
         a month?
       </div>
-      <br />
       <input
         required
         type="range"
@@ -39,11 +37,8 @@ export default function UnpredictableTasksForm({
           );
         }}
       />
-      <br />
       <label>Duration</label>
-      <br />
       <div className="description">How long it will take then?</div>
-      <br />
       <input
         required
         type="number"
